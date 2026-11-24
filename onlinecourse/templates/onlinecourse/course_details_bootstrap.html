@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,45 +5,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ course.name }}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">
+                Home
+            </a>
 
             {% if user.is_authenticated %}
-                <div>
-                    <span>{{ user.first_name }} ({{ user.username }})</span>
-                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
+                <div class="ml-auto">
+                    <span class="navbar-text mr-3">
+                        {{ user.first_name }} ({{ user.username }})
+                    </span>
+                    <a class="btn btn-outline-secondary"
+                       href="{% url 'onlinecourse:logout' %}">
+                        Logout
+                    </a>
                 </div>
             {% else %}
-                <a class="btn btn-link" href="{% url 'onlinecourse:login' %}">Login</a>
-                <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
+                <div class="ml-auto">
+                    <a class="btn btn-outline-primary mr-2"
+                       href="{% url 'onlinecourse:login' %}">
+                        Login
+                    </a>
+                    <a class="btn btn-primary"
+                       href="{% url 'onlinecourse:registration' %}">
+                        Sign Up
+                    </a>
+                </div>
             {% endif %}
         </div>
     </nav>
 
     <div class="container mt-4">
-        <h2>{{ course.name }}</h2>
-        <p>{{ course.description }}</p>
 
-        <h4>Lessons</h4>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">{{ course.name }}</h2>
+                <p class="card-text">{{ course.description }}</p>
+            </div>
+        </div>
+
+        <h4 class="mb-3">Lessons</h4>
 
         {% for lesson in course.lesson_set.all|dictsort:"order" %}
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5>Lesson {{ lesson.order|add:1 }}: {{ lesson.title }}</h5>
+                    <h5 class="mb-0">
+                        Lesson {{ lesson.order|add:1 }}: {{ lesson.title }}
+                    </h5>
                 </div>
+
                 <div class="card-body">
                     {{ lesson.content }}
                 </div>
             </div>
+
         {% empty %}
-            <p>No lessons available.</p>
+            <div class="alert alert-info">
+                No lessons available.
+            </div>
         {% endfor %}
+
     </div>
+
 </body>
 </html>
 
