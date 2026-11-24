@@ -33,7 +33,7 @@ class LessonAdmin(admin.ModelAdmin):
 
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
-    list_display = ['question_text', 'content', 'course', 'grade']
+    list_display = ['question_text', 'course', 'grade']
     search_fields = ['content']
 
 
