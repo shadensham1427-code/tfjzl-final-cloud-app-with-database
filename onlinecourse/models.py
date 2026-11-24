@@ -1,5 +1,6 @@
 import sys
 from django.utils.timezone import now
+
 try:
     from django.db import models
 except Exception:
@@ -33,12 +34,14 @@ class Learner(models.Model):
     DEVELOPER = 'developer'
     DATA_SCIENTIST = 'data_scientist'
     DATABASE_ADMIN = 'dba'
+
     OCCUPATION_CHOICES = [
         (STUDENT, 'Student'),
         (DEVELOPER, 'Developer'),
         (DATA_SCIENTIST, 'Data Scientist'),
         (DATABASE_ADMIN, 'Database Admin')
     ]
+
     occupation = models.CharField(
         null=False,
         max_length=20,
@@ -48,8 +51,7 @@ class Learner(models.Model):
     social_link = models.URLField(max_length=200)
 
     def __str__(self):
-        return self.user.username + "," + \
-               self.occupation
+        return self.user.username + "," + self.occupation
 
 
 # Course model
@@ -59,13 +61,15 @@ class Course(models.Model):
     description = models.CharField(max_length=1000)
     pub_date = models.DateField(null=True)
     instructors = models.ManyToManyField(Instructor)
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Enrollment')
+    users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='Enrollment'
+    )
     total_enrollment = models.IntegerField(default=0)
     is_enrolled = False
 
     def __str__(self):
-        return "Name: " + self.name + "," + \
-               "Description: " + self.description
+        return "Name: " + self.name + "," + "Description: " + self.description
 
 
 # Lesson model
@@ -81,11 +85,13 @@ class Enrollment(models.Model):
     AUDIT = 'audit'
     HONOR = 'honor'
     BETA = 'BETA'
+
     COURSE_MODES = [
         (AUDIT, 'Audit'),
         (HONOR, 'Honor'),
         (BETA, 'BETA')
     ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date_enrolled = models.DateField(default=now)
@@ -106,10 +112,16 @@ class Question(models.Model):
     def __str__(self):
         return self.content
 
-    def is_get_score(self, selected_choice):
-        if selected_choice and selected_choice.is_correct:
-            return self.grade
-        return 0
+    def is_get_score(self, selected_ids):
+        correct_ids = set(
+            self.choice_set.filter(is_correct=True).values_list('id', flat=True)
+        )
+
+        selected_question_ids = set(
+            self.choice_set.filter(id__in=selected_ids).values_list('id', flat=True)
+        )
+
+        return correct_ids == selected_question_ids and len(correct_ids) > 0
 
 
 # Choice model
@@ -129,4 +141,3 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"Submission {self.id}"
-       
