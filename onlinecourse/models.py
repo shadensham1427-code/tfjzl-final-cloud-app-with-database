@@ -1,6 +1,5 @@
 import sys
 from django.utils.timezone import now
-
 try:
     from django.db import models
 except Exception:
@@ -78,8 +77,6 @@ class Lesson(models.Model):
 
 
 # Enrollment model
-# Once a user enrolls in a class, an enrollment entry is created
-# This enrollment tracks information such as exam submissions
 class Enrollment(models.Model):
     AUDIT = 'audit'
     HONOR = 'honor'
@@ -101,6 +98,10 @@ class Question(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     content = models.CharField(max_length=200)
     grade = models.IntegerField(default=0)
+
+    @property
+    def question_text(self):
+        return self.content
 
     def __str__(self):
         return self.content
@@ -128,4 +129,4 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"Submission {self.id}"
-
+       
